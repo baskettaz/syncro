@@ -4,6 +4,7 @@ from collections.abc import (
 )
 from typing import (
     Any,
+    Generic,
     Self,
     TypeVar,
 )
@@ -20,12 +21,16 @@ def flatten(items, ignore_types=(str, bytes)):
             yield x
 
 
-class OrderedSet(T):
+class OrderedSet(Generic[T]):
     @staticmethod
     def is_iterable(obj: Any) -> bool:
         return obj and isinstance(obj, Iterable)
 
     def __init__(self, iterable: Iterable[T] | None = None):
+        # Note:
+        # -----
+        # Here the current regular dict implementation, which could be changed in the future,
+        # if this would be the case please change dict with OrderedDict to preserve the order.
         self._data: dict[T, None] = {}
 
         if self.is_iterable(iterable):
@@ -57,18 +62,21 @@ class OrderedSet(T):
         keys = list(self._data)
         return keys[index]
 
+    def __eq__(self, other: Self) -> bool:
+        return self._data == other._data
+
     @classmethod
     def from_keys(cls, keys: Iterable[T]) -> Self:
         return cls(keys)
 
     def __or__(self, other: Iterable[T]) -> Self:
         """Union: self | other"""
-        # Check here ?
-        return self.update(other)
+        new_ordered_set = OrderedSet(self._data.keys())
+        new_ordered_set.update(other)
+        return new_ordered_set
 
     def __and__(self, other: Iterable[T]) -> Self:
         """Intersection: self & other"""
-        # Check here ?
         return OrderedSet(x for x in self if x in other)
 
     def __sub__(self, other: Iterable[T]) -> Self:

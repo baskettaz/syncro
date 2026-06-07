@@ -22,10 +22,10 @@ classifiers = [
 
 dependencies = [
     "coverage>=7.13.5",
-    "pre-commit>=4.6.0",
     "pyinstaller>=6.20.0",
     "pyqt6>=6.11.0",
     "pytest>=9.0.3",
+    "pytest-sugar>=1.1.1",
     "ruff>=0.15.12",
     "ty>=0.0.34",
     "zensical>=0.0.41",
@@ -57,11 +57,6 @@ pyinstaller = [
 ]
 
 
-[tool.ruff]
-exclude = [
-    "*cookiecutter.package_name*"
-    ]
-
 [tool.ruff.lint]
 select = [
     "E",   # pycodestyle errors
@@ -72,8 +67,10 @@ select = [
     "UP",  # pyupgrade
 ]
 ignore = [
-    "E501",  # line length (handled by ruff format for code)
-    "B008",  # function call in defaults (standard typer pattern)
+     "E501" , # line length (handled by ruff format for code)
+     "F401" , # imported but unused
+     "B008" , # function call in defaults (standard typer pattern)
+    "UP046" , # checks for use of standalone type variables (currently can't make it better)
 ]
 
 [tool.ty.src]
@@ -91,10 +88,8 @@ show_missing = true
 skip_covered = true
 
 [tool.pytest.ini_options]
-testpaths = [
-    "tests",
-]
-
+testpaths = ["tests"]
+pythonpath = ["."]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -105,3 +100,5 @@ include = [
     "hooks/",
     "syncro/",
 ]
+
+
