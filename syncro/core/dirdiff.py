@@ -1,12 +1,7 @@
 import logging
-import os
-import stat
-from collections.abc import Generator, Iterable
+from collections.abc import Generator
 from dataclasses import dataclass, field
-from functools import lru_cache
-from itertools import filterfalse
 from pathlib import Path
-from types import GenericAlias
 
 from syncro.containers.ordered_set import OrderedSet
 
@@ -19,6 +14,7 @@ BUFSIZE = 1024 * 1024  # 1MB
 def verify_files(left: Path, right: Path) -> bool:
     if not (left.is_file() and right.is_file()):
         return False
+    return True
 
 
 def cmp_files_stats(left: Path, right: Path) -> bool:
@@ -34,11 +30,15 @@ def cmp_files_as_binaries(left: Path, right: Path, bufsize: int = BUFSIZE) -> bo
     verify_files(left, right)
 
     with open(left.absolute(), "rb") as fp1, open(right.absolute(), "rb") as fp2:
-        while (b1 := fp1.read(bufsize)) and (b2 := fp2.read(bufsize)):
+        while True:
+            b1 = fp1.read(bufsize)
+            b2 = fp2.read(bufsize)
+
             if b1 != b2:
                 return False
-        else:
-            return True if (not b1) and (not b2) else False
+
+            if not b1 and not b2:
+                return True
 
 
 @dataclass
@@ -50,28 +50,25 @@ class DirCompare:
     # fmt: on
 
     def filter(self, root: Path) -> Generator[Path]:
-        for item in root.glob("*"):
+        for item in root.glob("**"):
             if not item.is_file():
                 # Note: dirs aren't interesting
                 continue
 
             element = f"{item.relative_to(root)}"
-            if not any(to_skip in element for to_skip in self.skip):
+            if self.skip:
+                if not any(to_skip in element for to_skip in self.skip):
+                    yield item
+            else:
                 yield item
 
     @property
     def left(self) -> OrderedSet:
-        if not self.skip:
-            return OrderedSet(self.left_dir.glob("*"))
-        else:
-            return OrderedSet(self.filter(self.left_dir))
+        return OrderedSet(self.filter(self.left_dir))
 
     @property
     def right(self) -> OrderedSet:
-        if not self.skip:
-            return OrderedSet(self.right_dir.glob("*"))
-        else:
-            return OrderedSet(self.filter(self.right_dir))
+        return OrderedSet(self.filter(self.right_dir))
 
     @property
     def left_only(self) -> OrderedSet:
@@ -109,6 +106,7 @@ class DirCompareFull:
 
     def __post_init__(self) -> None:
         self.compared = DirCompare(self.from_dir, self.to_dir, self.skip)
+        self.determine_diffs()
 
     def make_shallow_compare(self, file: Path, left: Path, right: Path) -> None:
         if cmp_files_stats(left, right):

@@ -58,6 +58,10 @@ class OrderedSet(Generic[T]):
     def __repr__(self) -> str:
         return f"OrderedSet({list(self._data)})"
 
+    def __str__(self) -> str:
+        result = "\n".join(f"{element}" for element in self._data)
+        return f"OrderedSet({result})"
+
     def __getitem__(self, index: int) -> T:
         keys = list(self._data)
         return keys[index]
