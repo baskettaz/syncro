@@ -58,9 +58,9 @@ class DirCompare:
             element = f"{item.relative_to(root)}"
             if self.skip:
                 if not any(to_skip in element for to_skip in self.skip):
-                    yield item
+                    yield element
             else:
-                yield item
+                yield element
 
     @property
     def left(self) -> OrderedSet:
