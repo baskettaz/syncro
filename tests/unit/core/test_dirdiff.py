@@ -120,3 +120,11 @@ def test_dir_compare_with_diff_dirs_skip_elements(first_dir, second_dir):
 
     assert len(dc.left_only) == 0
     assert len(dc.right_only) == 0
+
+
+def test_dir_compare_full_all_shallow(first_dir, second_dir):
+    dcf = DirCompareFull(first_dir, second_dir, shallow=True)
+    assert len(dcf.left_only) == 0
+    assert len(dcf.right_only) == 3
+    assert len(dcf.diffs) == 3
+    assert len(dcf.no_diffs) == 0

@@ -108,6 +108,14 @@ class DirCompareFull:
         self.compared = DirCompare(self.from_dir, self.to_dir, self.skip)
         self.determine_diffs()
 
+    @property
+    def left_only(self) -> OrderedSet:
+        return self.compared.left_only
+
+    @property
+    def right_only(self) -> OrderedSet:
+        return self.compared.right_only
+
     def make_shallow_compare(self, file: Path, left: Path, right: Path) -> None:
         if cmp_files_stats(left, right):
             self.no_diffs.add(file)

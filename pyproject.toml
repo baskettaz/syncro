@@ -81,11 +81,16 @@ exclude = [
 [tool.coverage.run]
 branch = true
 parallel = true
-source = ["tests/"]
+source = ["syncro/"]
+data_file = "docs/coverage/.coverage"
+
 
 [tool.coverage.report]
 show_missing = true
-skip_covered = true
+skip_covered = false
+
+[tool.coverage.html]
+directory = "docs/coverage"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

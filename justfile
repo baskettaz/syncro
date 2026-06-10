@@ -10,6 +10,10 @@ alias d := docs-serve
 alias t := test
 alias ty := type-check
 
+# Update RC files for the GUI creation
+update-rc:
+    uv run --python=3.14 scripts/update_rc.py
+
 # Type check the project with ty
 type-check:
     uv run --python=3.14 ty check .

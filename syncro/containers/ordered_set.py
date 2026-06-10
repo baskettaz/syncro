@@ -69,10 +69,6 @@ class OrderedSet(Generic[T]):
     def __eq__(self, other: Self) -> bool:
         return self._data == other._data
 
-    @classmethod
-    def from_keys(cls, keys: Iterable[T]) -> Self:
-        return cls(keys)
-
     def __or__(self, other: Iterable[T]) -> Self:
         """Union: self | other"""
         new_ordered_set = OrderedSet(self._data.keys())
