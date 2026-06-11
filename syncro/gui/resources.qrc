@@ -1,6 +1,11 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
 	<qresource prefix = "icons">
+            <file alias="exit">.\icons\exit.png</file>
+            <file alias="new">.\icons\new.png</file>
+            <file alias="open">.\icons\open.png</file>
+            <file alias="save">.\icons\save.png</file>
+            <file alias="save_as">.\icons\save_as.png</file>
             <file alias="syncro">.\icons\syncro.png</file>
 	</qresource>
 </RCC>
